@@ -2,14 +2,14 @@ FROM node:18-alpine
 
 WORKDIR /app
 
-# Bağımlılığı yükle
-RUN npm init -y && npm install 9router
+# Puppeteer vb. bağımlılıkların indirilmesini engelleyerek hafif kurulum sağlama
+ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
+ENV PORT=20128
 
-# Proje dosyalarını (entry.js) içeri kopyala
+RUN npm init -y && npm install 9router --no-optional --omit=dev
+
 COPY . .
 
-ENV PORT=20128
 EXPOSE 20128
 
-# Doğrudan hazırladığımız entry.js dosyasını çalıştır
-CMD ["node", "entry.js"]
+CMD ["node", "--max-old-space-size=128", "entry.js"]
