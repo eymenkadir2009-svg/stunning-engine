@@ -1,10 +1,8 @@
 FROM node:18-alpine
 
-# 9Router kurulumu
 RUN npm install -g 9router
 
-# Port tanımı
+ENV PORT=20128
 EXPOSE 20128
 
-# Render'ın dinamik portunu alıp servisi ön planda (foreground) açık tutan komut
-CMD ["sh", "-c", "9router --port ${PORT:-20128} & tail -f /dev/null"]
+CMD ["sh", "-c", "9router --host 0.0.0.0 --port ${PORT:-20128}"]
