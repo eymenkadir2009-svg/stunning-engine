@@ -1,16 +1,14 @@
-FROM node:18-alpine
+FROM node:20-alpine
 
-WORKDIR /app
+# 9Router paketini global olarak yükle
+RUN npm install -g 9router
 
-ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
-ENV NODE_ENV=production
-ENV HOSTNAME="0.0.0.0"
-ENV PORT=10000
+# Railway'in atadığı PORT'u veya varsayılan 20128'i kullan
+ENV PORT=20128
+EXPOSE 20128
 
-# 9router paketini kuruyoruz
-RUN npm init -y && npm install 9router --no-optional --omit=dev
+# Config verilerinin silinmemesi için çalışma dizini
+WORKDIR /root/.9router
 
-EXPOSE 10000
-
-# Doğrudan npm binary'sini Node bellek limiti ile çalıştırıyoruz
-CMD ["node", "--max-old-space-size=384", "node_modules/.bin/9router"]
+# 9Router sunucusunu başlat
+CMD ["9router"]
