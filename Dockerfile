@@ -2,18 +2,15 @@ FROM node:18-alpine
 
 WORKDIR /app
 
-# Puppeteer vb. gereksiz indirmeleri engelle
 ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
 ENV NODE_ENV=production
 ENV HOSTNAME="0.0.0.0"
+ENV PORT=10000
 
-# Bağımlılığı kur
+# 9router paketini global veya lokal kuruyoruz
 RUN npm init -y && npm install 9router --no-optional --omit=dev
 
-COPY . .
-
-# Render varsayılan portu 10000'dir, dinlemesini sağlıyoruz
 EXPOSE 10000
 
-# Node.js bellek limitini 256MB ile sınırlandırıp çalıştırıyoruz
-CMD ["node", "--max-old-space-size=256", "entry.js"]
+# npx veya child_process kullanmadan doğrudan node_modules/.bin/9router dosyasını çalıştırıyoruz
+CMD ["node", "--max-old-space-size=384", "node_modules/9router/dist/index.js"]
