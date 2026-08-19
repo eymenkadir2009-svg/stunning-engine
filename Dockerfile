@@ -1,12 +1,14 @@
 FROM node:20-alpine
 
-# 9Router paketini yükle
 RUN npm install -g 9router
 
+# Railway'in dinamik PORT atamasını ve 0.0.0.0 bağlamını zorunlu kıl
+ENV HOST=0.0.0.0
 ENV PORT=20128
+
 EXPOSE 20128
 
 WORKDIR /root/.9router
 
-# 0.0.0.0 ile tüm dış ağ isteklerine açıyoruz
-CMD ["9router", "--host", "0.0.0.0", "--port", "20128"]
+# Ek bayrak vermeden doğrudan başlat (ENV değişkenlerini otomatik okur)
+CMD ["9router"]
