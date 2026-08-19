@@ -1,34 +1,24 @@
-const { spawn } = require('child_process');
-const path = require('path');
+// entry.js
+const { execSync } = require('child_process');
 
-const pkg = require('./node_modules/9router/package.json');
-const binRel = typeof pkg.bin === 'string' ? pkg.bin : (pkg.bin ? Object.values(pkg.bin)[0] : pkg.main);
-const binPath = path.resolve('./node_modules/9router', binRel);
+// Render'ın dinamik PORT'unu veya varsayılanı al
+const port = process.env.PORT || 20128;
+const host = process.env.HOSTNAME || '0.0.0.0';
+const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || `http://localhost:${port}`;
 
-const port = process.env.PORT || '20128';
+console.log(`9router starting on ${host}:${port}...`);
 
-console.log(`[Entry] Launching 9router on 0.0.0.0:${port}...`);
-
-// Node.js çöp toplayıcısını (GC) ve bellek kullanımını agresif şekilde kısıtlıyoruz
-const args = [
-  '--max-old-space-size=128',
-  '--optimize-for-size',
-  '--gc-global',
-  binPath,
-  '--host', '0.0.0.0',
-  '--port', port
-];
-
-const child = spawn(process.execPath, args, {
-  stdio: 'inherit',
-  env: { 
-    ...process.env, 
-    PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: 'true',
-    DISABLE_AUTO_UPDATE: 'true'
-  }
-});
-
-child.on('exit', (code, signal) => {
-  console.log(`[Entry] 9router process exited with code ${code}, signal: ${signal}`);
-  process.exit(code || 1);
-});
+try {
+  // 9router CLI komutunu uygun ortam değişkenleriyle çalıştırır
+  execSync(`npx 9router`, {
+    stdio: 'inherit',
+    env: {
+      ...process.env,
+      PORT: port,
+      HOSTNAME: host,
+      NEXT_PUBLIC_BASE_URL: baseUrl
+    }
+  });
+} catch (err) {
+  console.error("9router başlatılamadı:", err);
+}
