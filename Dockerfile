@@ -2,14 +2,18 @@ FROM node:18-alpine
 
 WORKDIR /app
 
-# Puppeteer vb. bağımlılıkların indirilmesini engelleyerek hafif kurulum sağlama
+# Puppeteer vb. gereksiz indirmeleri engelle
 ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
-ENV PORT=20128
+ENV NODE_ENV=production
+ENV HOSTNAME="0.0.0.0"
 
+# Bağımlılığı kur
 RUN npm init -y && npm install 9router --no-optional --omit=dev
 
 COPY . .
 
-EXPOSE 20128
+# Render varsayılan portu 10000'dir, dinlemesini sağlıyoruz
+EXPOSE 10000
 
-CMD ["node", "--max-old-space-size=128", "entry.js"]
+# Node.js bellek limitini 256MB ile sınırlandırıp çalıştırıyoruz
+CMD ["node", "--max-old-space-size=256", "entry.js"]
